@@ -126,6 +126,7 @@ func (tw *TimeWheel) Start() {
 	tw.onceStart.Do(
 		func() {
 			tw.ticker = time.NewTicker(tw.tick)
+            tw.exited = false
 			go tw.schduler()
 			go tw.tickGenerator()
 		},
@@ -237,7 +238,7 @@ func (tw *TimeWheel) AddCron(delay time.Duration, callback func()) *Task {
 }
 
 func (tw *TimeWheel) addAny(delay time.Duration, callback func(), circle, async bool) *Task {
-	if delay <= 0 {
+	if delay <= tw.tick {
 		delay = tw.tick
 	}
 
